@@ -461,17 +461,26 @@ async def main() -> None:
     application.add_handler(MessageHandler(filters.VOICE, voice_message))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
-    logger.info("Starting bot...")
-    await application.initialize()
-    await application.start()
-    await application.updater.start_polling(drop_pending_updates=True)
-    try:
-        await asyncio.Event().wait()
-    finally:
-        await application.updater.stop()
-        await application.stop()
-        await application.shutdown()
+def main() -> None:
+    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("mode", mode_command))
+    application.add_handler(CommandHandler("language", language_command))
+    application.add_handler(CommandHandler("next", next_command))
+    application.add_handler(CommandHandler("reset", reset_command))
+    application.add_handler(CallbackQueryHandler(on_callback))
+    application.add_handler(MessageHandler(filters.VOICE, voice_message))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    PORT = int(os.environ.get("PORT", 10000))
+
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        webhook_url="https://sena-ai-lhrp.onrender.com",
+        drop_pending_updates=True,
+    )
+if __name__ == "__main__": 
+    main()
