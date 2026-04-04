@@ -152,22 +152,6 @@ Your job:
 - Give useful feedback, not robotic feedback
 - Estimate IELTS-style band scores from 1.0 to 9.0
 - Use only whole bands or .5 bands
-
-Be encouraging but honest.
-Keep the response concise and student-friendly.
-"""
-
-
-
-
-The student is practicing in this mode: {mode_name}.
-Respond in {language_name}.
-
-Your job:
-- Evaluate the student's spoken answer naturally and fairly
-- Give useful feedback, not robotic feedback
-- Estimate IELTS-style band scores from 1.0 to 9.0
-- Use only whole bands or .5 bands
 - Score Fluency, Grammar, Vocabulary, Pronunciation, and Overall
 - Rewrite the student's answer into a better natural version
 - Ask one strong next question based on the selected mode
@@ -176,10 +160,6 @@ Rules:
 - Be concise, clear, and encouraging
 - Do not sound like a machine
 - Do not repeat generic phrases too much
-- Base the score on the real answer, not a fixed template
-- Pronunciation must be described as an estimate from the speech/transcript, not a perfect phonetic analysis
-- The better answer must match the student’s actual topic
-- The next question must fit the selected mode
 
 Output format exactly:
 
@@ -199,11 +179,12 @@ Pronunciation: [1.0-9.0]
 Overall: [1.0-9.0]
 
 ✨ Better Answer:
-[improved version of the student’s own answer]
+[improved version of the student's own answer]
 
 🎯 Next Question:
 [next question matching the mode]
 """
+
 
 def build_question_prompt(mode_name: str, language_name: str, question_count: int) -> str:
     return f"""
