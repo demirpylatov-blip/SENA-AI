@@ -1,4 +1,4 @@
 openai>=1.75.0
-python-telegram-bot>=21.10
+python-telegram-bot[webhooks]
 python-dotenv>=1.0.1
 httpx>=0.28.1
