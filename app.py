@@ -104,12 +104,12 @@ UI_TEXT = {
 
 @dataclass
 class Session:
-    mode: str = ""
-    language: str = DEFAULT_LANGUAGE
-    history: List[Dict[str, str]] = field(default_factory=list)
-    question_count: int = 0
-    last_question: str = ""
-
+   mode: str = "general"
+    language: str = "english"
+    current_question: str = ""
+    history: list = field(default_factory=list)
+    name: str = ""
+    awaiting_name: bool = True
 
 SESSIONS: Dict[int, Session] = {}
 
@@ -142,36 +142,60 @@ def language_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(rows)
 
 
-def build_system_prompt(mode_name: str, language_name: str) -> str:
-    return f"""
-You are an expert English-speaking tutor for Sena Language Center.
 
-Your job:
-1. Act as a speaking examiner or conversation coach depending on the mode.
-2. Read the student's answer.
-3. Give short, practical feedback.
-4. Estimate performance clearly.
-5. Ask exactly one next question.
-
-Mode: {mode_name}
-UI language: {language_name}
-
-Rules:
 - Be encouraging but honest.
 - Keep the response concise and student-friendly.
 - Give feedback under these exact headings:
-  Transcript
-  Feedback
-  Scores
-  Next Question
-- Under Feedback, comment on Fluency, Grammar, Vocabulary, and Pronunciation.
-- Under Scores, give 4 scores out of 9 and one Overall estimate.
-- If pronunciation cannot be fully judged from text alone, say it is an estimate based on the transcript.
-- Ask exactly one next question at the end.
-- For IELTS Part 2, if the student answer is too short, encourage more detail in the next turn.
-- Do not output JSON.
-""".strip()
+  Transcriptdef build_system_prompt(mode_name: str, language_name: str) -> str:
+    return f"""
+def build_system_prompt(mode_name: str, language_name: str) -> str:
+    return f"""
+You are Sena AI, a smart speaking tutor and IELTS-style examiner.
 
+The student is practicing in this mode: {mode_name}.
+Respond in {language_name}.
+
+Your job:
+- Evaluate the student's spoken answer naturally and fairly
+- Give useful feedback, not robotic feedback
+- Estimate IELTS-style band scores from 1.0 to 9.0
+- Use only whole bands or .5 bands
+- Score Fluency, Grammar, Vocabulary, Pronunciation, and Overall
+- Rewrite the student's answer into a better natural version
+- Ask one strong next question based on the selected mode
+
+Rules:
+- Be concise, clear, and encouraging
+- Do not sound like a machine
+- Do not repeat generic phrases too much
+- Base the score on the real answer, not a fixed template
+- Pronunciation must be described as an estimate from the speech/transcript, not a perfect phonetic analysis
+- The better answer must match the student’s actual topic
+- The next question must fit the selected mode
+
+Output format exactly:
+
+🔥 Sena AI Feedback for [Student Name]
+
+Transcript:
+[cleaned version of the student's answer]
+
+💬 Feedback:
+[2-4 short natural lines]
+
+📊 IELTS Band Score (Estimated):
+Fluency: [1.0-9.0]
+Grammar: [1.0-9.0]
+Vocabulary: [1.0-9.0]
+Pronunciation: [1.0-9.0]
+Overall: [1.0-9.0]
+
+✨ Better Answer:
+[improved version of the student’s own answer]
+
+🎯 Next Question:
+[next question matching the mode]
+"""
 
 def build_question_prompt(mode_name: str, language_name: str, question_count: int) -> str:
     return f"""
@@ -188,22 +212,27 @@ Rules:
 - If mode is IELTS Part 3, ask a more analytical discussion question.
 - If mode is General English, ask a practical real-life conversation question.
 """.strip()
-
-
 def build_feedback_input(session: Session, transcript: str) -> str:
     history_lines = []
     for item in session.history[-6:]:
         history_lines.append(f"{item['role'].upper()}: {item['content']}")
     history_text = "\n".join(history_lines) if history_lines else "No prior history."
+
     return f"""
+Student name: {session.name or "Student"}
+Mode: {session.mode}
+Language: {session.language}
+Current question: {session.current_question}
+
 Previous conversation:
 {history_text}
 
 Student transcript:
 {transcript}
 
-Now evaluate the student answer and continue the speaking session.
-""".strip()
+Now evaluate the student's answer and continue the speaking session.
+Use IELTS-style scores from 1.0 to 9.0 only, with .5 steps allowed.
+"""
 
 
 def run_in_thread(func, *args, **kwargs):
@@ -234,13 +263,13 @@ def evaluate_answer(session: Session, transcript: str) -> str:
         ],
     )
     text = getattr(response, "output_text", "").strip()
-    return text or f"""🔥 Sena AI Feedback
+    return text or f"""🔥 Sena AI Feedback for {session.name or "Student"}
 
 Transcript:
 {transcript}
 
 💬 Feedback:
-Nice attempt 👍 but let’s improve it.
+Nice try, {session.name or "there"} 👍 but let’s improve it.
 
 Try to:
 - Speak in 2–3 full sentences
@@ -248,11 +277,11 @@ Try to:
 - Avoid repeating simple words
 
 📊 Band Score (Estimated):
-Fluency: 6
-Grammar: 6
-Vocabulary: 6
-Pronunciation: 6
-Overall: 6
+Fluency: 5.5
+Grammar: 5.0
+Vocabulary: 5.5
+Pronunciation: 6.0
+Overall: 5.5
 
 ✨ Better Answer:
 I really enjoy reading books, especially interesting ones like novels or stories. I also like watching anime in my free time because it helps me relax and enjoy my day.
@@ -282,13 +311,16 @@ def synthesize_voice(text: str, output_path: str) -> None:
         response.stream_to_file(output_path)
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def startasync def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     session = get_session(chat_id)
-    text = t(session, "welcome", bot_name=BOT_NAME)
-    await update.message.reply_text(text)
-    await update.message.reply_text(t(session, "choose_mode"), reply_markup=mode_keyboard())
 
+    session.awaiting_name = True
+    session.name = ""
+
+    await update.message.reply_text(
+        "👋 Welcome to Sena AI.\n\nBefore we begin, what’s your name?"
+    )
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     session = get_session(update.effective_chat.id)
@@ -405,13 +437,32 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def text_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id
+    session = get_session(chat_id)
+    text = update.message.text.strip()
+
+    # 🔥 NEW PART — NAME HANDLING
+    if session.awaiting_name:
+        session.name = text
+        session.awaiting_name = False
+
+        await update.message.reply_text(
+            f"Nice to meet you, {session.name} 🔥"
+        )
+
+        await update.message.reply_text(
+            "Choose your speaking mode 🎯",
+            reply_markup=mode_keyboard()
+        )
+        return
+
+    # 🔽 OLD LOGIC (keep this)
     try:
-        await process_transcript(update, context, update.message.text.strip())
+        await process_transcript(update, context, text)
     except Exception:
         session = get_session(update.effective_chat.id)
         logger.exception("Failed to process text message")
         await update.message.reply_text(t(session, "error"))
-
 
 async def main() -> None:
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
