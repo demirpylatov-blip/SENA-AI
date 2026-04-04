@@ -475,11 +475,10 @@ def main() -> None:
 
     PORT = int(os.environ.get("PORT", 10000))
 
-    application.run_webhook(
+   application.run_webhook(
     listen="0.0.0.0",
     port=PORT,
     webhook_url="https://sena-ai-lhrp.onrender.com",
-    drop_pending_updates=True,
 )
 
 
