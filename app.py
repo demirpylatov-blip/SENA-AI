@@ -474,7 +474,6 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
 PORT = int(os.environ.get("PORT", 10000))
-
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
