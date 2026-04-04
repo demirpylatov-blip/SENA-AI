@@ -460,26 +460,27 @@ async def main() -> None:
     application.add_handler(CallbackQueryHandler(on_callback))
     application.add_handler(MessageHandler(filters.VOICE, voice_message))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
-def main() -> None:
-    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+import os
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("mode", mode_command))
-    application.add_handler(CommandHandler("language", language_command))
-    application.add_handler(CommandHandler("next", next_command))
-    application.add_handler(CommandHandler("reset", reset_command))
-    application.add_handler(CallbackQueryHandler(on_callback))
-    application.add_handler(MessageHandler(filters.VOICE, voice_message))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
-PORT = int(os.environ.get("PORT", 10000))
-    application.run_webhook(
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Bot is working 🔥")
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+
+    PORT = int(os.environ.get("PORT", 10000))
+
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-     webhook_url="https://sena-ai-lhrp.onrender.com",  
-
+        webhook_url="https://sena-ai-lhrp.onrender.com",
     )
 
-if __name__ == "__main__":
+if __name__== "__main__":
     main()
