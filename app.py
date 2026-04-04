@@ -100,16 +100,16 @@ UI_TEXT = {
         "error": "Что-то пошло не так. Попробуйте ещё раз.",
     },
 }
-
-
 @dataclass
 class Session:
-   mode: str = "general"
+    mode: str = "general"
     language: str = "english"
     current_question: str = ""
     history: list = field(default_factory=list)
     name: str = ""
     awaiting_name: bool = True
+
+
 
 SESSIONS: Dict[int, Session] = {}
 
