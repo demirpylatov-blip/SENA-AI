@@ -473,14 +473,14 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.VOICE, voice_message))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
-    PORT = int(os.environ.get("PORT", 10000))
+PORT = int(os.environ.get("PORT", 10000))
 
-   application.run_webhook(
-    listen="0.0.0.0",
-    port=PORT,
-    webhook_url="https://sena-ai-lhrp.onrender.com",
-)
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+     webhook_url="https://sena-ai-lhrp.onrender.com",  
 
+    )
 
 if __name__ == "__main__":
     main()
