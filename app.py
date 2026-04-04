@@ -5,9 +5,12 @@ import os
 import tempfile
 from dataclasses import dataclass, field
 from typing import Dict, List
-
+from flask import Flask
 from dotenv import load_dotenv
 from openai import OpenAI
+from threading import Thread
+def run_web():
+    app_web.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ChatAction
 from telegram.ext import (
@@ -470,17 +473,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Bot is working 🔥")
 
 def main():
-    app = Application.builder().token(TOKEN).build()
+    application = Application.builder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("start", start))
 
-    PORT = int(os.environ.get("PORT", 10000))
+    Thread(target=run_web).start()
 
-    app.run_webhook(
+    application.run_webhook(
         listen="0.0.0.0",
-        port=PORT,
+        port=int(os.environ.get("PORT", 10000)),
         webhook_url="https://sena-ai-lhrp.onrender.com",
     )
 
-if __name__== "__main__":
-    main()
+@app_web.route("/")
+def home():
+    return "Bot is alive" 
+
+ 
