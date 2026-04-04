@@ -299,13 +299,8 @@ def synthesize_voice(text: str, output_path: str) -> None:
     ) as response:
         response.stream_to_file(output_path)
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
-async def startasync def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    chat_id = update.effective_chat.id
-    session = get_session(chat_id)
-
-    session.awaiting_name = True
-    session.name = ""
 
     await update.message.reply_text(
         "👋 Welcome to Sena AI.\n\nBefore we begin, what’s your name?"
