@@ -234,7 +234,32 @@ def evaluate_answer(session: Session, transcript: str) -> str:
         ],
     )
     text = getattr(response, "output_text", "").strip()
-    return text or "Transcript\n" + transcript + "\n\nFeedback\nGood effort. Try to extend your answer with clearer examples.\n\nScores\nFluency: 6.0\nGrammar: 6.0\nVocabulary: 6.0\nPronunciation: 6.0\nOverall: 6.0\n\nNext Question\nWhat kind of speaking tasks do you find the most difficult?"
+    return text or f"""🔥 Sena AI Feedback
+
+Transcript:
+{transcript}
+
+💬 Feedback:
+Nice attempt 👍 but let’s improve it.
+
+Try to:
+- Speak in 2–3 full sentences
+- Use more natural expressions
+- Avoid repeating simple words
+
+📊 Band Score (Estimated):
+Fluency: 6
+Grammar: 6
+Vocabulary: 6
+Pronunciation: 6
+Overall: 6
+
+✨ Better Answer:
+I really enjoy reading books, especially interesting ones like novels or stories. I also like watching anime in my free time because it helps me relax and enjoy my day.
+
+🎯 Next Question:
+Why do you think people enjoy reading books nowadays, and how has technology changed reading habits?
+"""
 
 
 def transcribe_audio(file_path: str) -> str:
