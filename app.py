@@ -475,12 +475,16 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
     PORT = int(os.environ.get("PORT", 10000))
-
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url="https://sena-ai-lhrp.onrender.com",
-        drop_pending_updates=True,
+await application.initialize()
+await application.start()
+await application.bot.set_webhook("https://sena-ai-lhrp.onrender.com")
+await asyncio.Event().wait()
+    
     )
-if __name__ == "__main__": 
-    main()
+import asyncio
+
+if __name__ =="__main__":
+    try:
+        asyncio.run(main())
+    except RuntimeError:
+        pass
