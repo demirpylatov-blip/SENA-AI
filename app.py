@@ -480,7 +480,7 @@ await application.start()
 await application.bot.set_webhook("https://sena-ai-lhrp.onrender.com")
 await asyncio.Event().wait()
     
-    )
+    
 import asyncio
 
 if __name__ =="__main__":
