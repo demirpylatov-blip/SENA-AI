@@ -140,17 +140,25 @@ def language_keyboard() -> InlineKeyboardMarkup:
         for key, name in LANGUAGES.items()
     ]
     return InlineKeyboardMarkup(rows)
-
-
-
-- Be encouraging but honest.
-- Keep the response concise and student-friendly.
-- Give feedback under these exact headings:
-  Transcriptdef build_system_prompt(mode_name: str, language_name: str) -> str:
-    return f"""
 def build_system_prompt(mode_name: str, language_name: str) -> str:
     return f"""
 You are Sena AI, a smart speaking tutor and IELTS-style examiner.
+
+The student is practicing in this mode: {mode_name}.
+Respond in {language_name}.
+
+Your job:
+- Evaluate the student's spoken answer naturally and fairly
+- Give useful feedback, not robotic feedback
+- Estimate IELTS-style band scores from 1.0 to 9.0
+- Use only whole bands or .5 bands
+
+Be encouraging but honest.
+Keep the response concise and student-friendly.
+"""
+
+
+
 
 The student is practicing in this mode: {mode_name}.
 Respond in {language_name}.
