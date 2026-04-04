@@ -460,7 +460,6 @@ async def main() -> None:
     application.add_handler(CallbackQueryHandler(on_callback))
     application.add_handler(MessageHandler(filters.VOICE, voice_message))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
-
 def main() -> None:
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
@@ -475,16 +474,14 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 
     PORT = int(os.environ.get("PORT", 10000))
-await application.initialize()
-await application.start()
-await application.bot.set_webhook("https://sena-ai-lhrp.onrender.com")
-await asyncio.Event().wait()
-    
-    
-import asyncio
 
-if __name__ =="__main__":
-    try:
-        asyncio.run(main())
-    except RuntimeError:
-        pass
+    application.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    webhook_url="https://sena-ai-lhrp.onrender.com",
+    drop_pending_updates=True,
+)
+
+
+if __name__ == "__main__":
+    main()
