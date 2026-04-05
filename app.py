@@ -79,5 +79,5 @@ def main():
     print("Sena AI is running...")
     app.run_polling(drop_pending_updates=True)
 
-if name == "__main__":
+if __name__ == "__main__":
     main()
