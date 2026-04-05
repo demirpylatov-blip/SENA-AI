@@ -180,9 +180,9 @@ def current_system_prompt(state: Dict) -> str:
 
 def chat_with_ai(system_prompt: str, user_text: str, history: List[Dict]) -> str:
     messages = [{"role": "system", "content": system_prompt}]
-[05.04.2026 16:28] sevdos: for item in history[-10:]:
+                for item in history[-10:]:
         messages.append({"role": item["role"], "content": item["content"]})
-    messages.append({"role": "user", "content": user_text})
+    messages.append({"role": "user", "content": user_text})    
 
     response = client.responses.create(
         model="gpt-4.1-mini",
@@ -313,7 +313,7 @@ async def process_button(update: Update, context: ContextTypes.DEFAULT_TYPE, tex
         state["started"] = True
         await update.message.reply_text(
             f"Great, {state['name'] or 'student'}.\nWe are starting IELTS Speaking.\n\nPart 1.
-[05.04.2026 16:28] sevdos: \nDo you work, study, or both?",
+              \nDo you work, study, or both?",
             reply_markup=KEYBOARD,
         )
         return True
@@ -447,7 +447,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         await update.message.
-[05.04.2026 16:28] sevdos: reply_text(f"Voice error: {e}", reply_markup=KEYBOARD)
+        reply_text(f"Voice error: {e}", reply_markup=KEYBOARD)
 
     finally:
         if temp_path and os.path.exists(temp_path):
