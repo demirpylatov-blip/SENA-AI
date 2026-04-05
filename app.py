@@ -3,11 +3,21 @@ import json
 import logging
 import os
 import tempfile
+
 from dataclasses import dataclass, field
 from typing import Dict, List
+
 from dotenv import load_dotenv
 from openai import OpenAI
 from threading import Thread
+
+# load env
+load_dotenv()
+
+# token
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+
+
 def run_web():
     app_web.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
