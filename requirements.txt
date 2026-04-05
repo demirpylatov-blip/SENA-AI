@@ -1,4 +1,3 @@
-python-telegram-bot[webhooks]
-python-dotenv
+python-telegram-bot==20.7
 openai
-requests
+python-dotenv
