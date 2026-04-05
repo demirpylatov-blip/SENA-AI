@@ -180,14 +180,15 @@ def current_system_prompt(state: Dict) -> str:
 
 def chat_with_ai(system_prompt: str, user_text: str, history: List[Dict]) -> str:
     messages = [{"role": "system", "content": system_prompt}]
-                for item in history[-10:]:
+    for item in history[-10:]:
         messages.append({"role": item["role"], "content": item["content"]})
-    messages.append({"role": "user", "content": user_text})    
+    messages.append({"role": "user", "content": user_text})
 
     response = client.responses.create(
         model="gpt-4.1-mini",
         input=messages,
     )
+    return response.output_text.strip()
     return response.output_text.strip()
 
 
