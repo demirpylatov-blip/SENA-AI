@@ -463,25 +463,24 @@ async def main() -> None:
     application.add_handler(MessageHandler(filters.VOICE, voice_message))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
 import os
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
-
-TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Bot is working 🔥")
-import os
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
 
-TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Bot is working 🔥")
+async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    await update.message.reply_text(f"You said: {text}")
 
 def main():
     app = Application.builder().token(TOKEN).build()
+
+    # start command
     app.add_handler(CommandHandler("start", start))
+
+    # 👇 ADD THIS LINE HERE
+    app.add_handler(MessageHandler(filters.TEXT, chat))
+
     app.run_polling()
 
 if __name__ == "__main__":
