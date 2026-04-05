@@ -484,13 +484,12 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
 
-    PORT = int(os.environ.get("PORT", 10000))
+ def main():
+    app = Application.builder().token(TOKEN).build()
 
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url="https://sena-ai-lhrp.onrender.com",
-    )
+    app.add_handler(CommandHandler("start", start))
 
-if __name__== "__main__":
+    app.run_polling()
+
+if __name__ == "__main__":
     main()
