@@ -25,14 +25,19 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(response.output_text)
-
 def main():
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT, chat))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("reset", reset_command))
+    app.add_handler(CommandHandler("finish", finish_command))
 
-  app.run_polling(drop_pending_updates=True)
+    app.add_handler(MessageHandler(filters.VOICE, handle_voice))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+
+    app.run_polling(drop_pending_updates=True)
+
 
 if __name__ == "__main__":
     main()
