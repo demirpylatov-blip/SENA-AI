@@ -308,18 +308,18 @@ async def process_button(update: Update, context: ContextTypes.DEFAULT_TYPE, tex
         )
         return True
 
-    if text == "🎯 IELTS":
-        state["mode"] = "ielts"
-        state["part"] = "part1"
-        state["started"] = True
-await update.message.reply_text(
-    f"Great, {state['name'] or 'student'}.\n"
-    "We are starting IELTS Speaking.\n\n"
-    "Part 1.\n"
-    "Do you work, study, or both?",
-    reply_markup=KEYBOARD,
-)
-        return True
+   if text == "🎯 IELTS":
+      state["mode"] = "ielts"
+      state["part"] = "part1"
+      state["started"] = True
+      await update.message.reply_text(
+          f"Great, {state['name'] or 'student'}.\n"
+          "We are starting IELTS Speaking.\n\n"
+          "Part 1.\n"
+          "Do you work, study, or both?",
+          reply_markup=KEYBOARD,
+     )
+     return True
 
     if text == "🟢 Part 1":
         state["mode"] = "ielts"
